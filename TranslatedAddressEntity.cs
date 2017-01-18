@@ -1,10 +1,12 @@
 ﻿using Microsoft.WindowsAzure.Storage.Table;
 
-namespace TranslationRobot.Entity
+namespace TranslationRobot
 {
     public class TranslatedAddressEntity:TableEntity
     {
         public const string DefaultPartitionKey = "Assorted";
+        public const string TableName = "TranslatedAddress";
+
         public TranslatedAddressEntity()
         {
 

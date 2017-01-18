@@ -6,7 +6,6 @@ namespace TranslationRobotTest
     [TestClass]
     public class TranslatorAccessTest
     {
-        private const string SubscriptionKey = "2033bf855ec24c79b47102716f4aa11c";
         [TestMethod]
         public void TestTranslate()
         {
@@ -60,8 +59,7 @@ namespace TranslationRobotTest
             result = LocationInfo.GetLocationInfo("1 Queen's Road Central, Hongkong", translatorAccess);
             Assert.AreEqual("香港中環皇后大道中1號", result);
 
-            result = LocationInfo.GetLocationInfo("383 Tianhe Road,Tianhe District,Guangzhao,China", translatorAccess);
-            Assert.AreEqual("香港中環皇后大道中1號", result);
+        
 
         }
     }

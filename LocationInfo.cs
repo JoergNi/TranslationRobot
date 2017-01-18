@@ -14,7 +14,7 @@ namespace TranslationRobot
         {
             string url = "http://ip-api.com/xml/";
             string checkURL = url + ipAddress;
-            string ipResponse = RequestHelper(checkURL);
+            string ipResponse = RequestHelper.DownloadString(checkURL);
 
             _ipInfoXML = new XmlDocument();
             _ipInfoXML.LoadXml(ipResponse);
@@ -39,7 +39,7 @@ namespace TranslationRobot
         {
             string encodedAddress = HttpUtility.UrlEncode(address);
             string url = " http://dev.virtualearth.net/REST/v1/Locations/" + encodedAddress + "?o=xml&incl=queryParse,ciso2&inclnb=1&key=Ag2p3wHuXnmlaO-LffokUlisExjYT6n70Vo9t71n72V5qQ_ZqA6gmPT4cXuD1Ych";
-            string result = RequestHelper(url);
+            string result = RequestHelper.DownloadString(url);
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(result);
             XmlNode resourceSet = xmlDocument.GetElementsByTagName("ResourceSet")[0];
@@ -50,27 +50,11 @@ namespace TranslationRobot
             }
             string country = xmlDocument.GetElementsByTagName("CountryRegionIso2").Item(0).InnerText;
             string languageCode = translatorAccess.GetLanguageCode(country);
-            string localizedResult = RequestHelper(url + "&c=" + languageCode);
+            string localizedResult = RequestHelper.DownloadString(url + "&c=" + languageCode);
             XmlDocument localizedXmlDocument = new XmlDocument();
             localizedXmlDocument.LoadXml(localizedResult);
             string localizedAddress = localizedXmlDocument.GetElementsByTagName("FormattedAddress").Item(0).InnerText;
             return localizedAddress;
-        }
-
-        public static string RequestHelper(string url)
-        {
-
-
-            HttpWebRequest objRequest = (HttpWebRequest)WebRequest.Create(url);
-            HttpWebResponse objResponse = (HttpWebResponse)objRequest.GetResponse();
-
-            StreamReader responseStream = new StreamReader(objResponse.GetResponseStream());
-            string responseRead = responseStream.ReadToEnd();
-
-            responseStream.Close();
-            responseStream.Dispose();
-
-            return responseRead;
         }
     } 
 }
