@@ -59,7 +59,12 @@ namespace TranslationRobotTest
             result = LocationInfo.GetLocationInfo("1 Queen's Road Central, Hongkong", translatorAccess);
             Assert.AreEqual("香港中環皇后大道中1號", result);
 
-        
+            result = LocationInfo.GetLocationInfo("Guangzhou", translatorAccess);
+            Assert.AreEqual("广东省广州市", result);
+           
+
+
+
 
         }
     }
