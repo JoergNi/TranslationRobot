@@ -1,8 +1,11 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Runtime.Serialization.Json;
 using System.Web;
 using System.Xml;
 
@@ -41,7 +44,7 @@ namespace TranslationRobot
         private const string BingMapsKey = "Ag2p3wHuXnmlaO-LffokUlisExjYT6n70Vo9t71n72V5qQ_ZqA6gmPT4cXuD1Ych";
 
 
-        internal static string GetLocalizedAddressFromGoogle(string address, TranslatorAccess translatorAccess)
+        internal static Location GetLocationFromGoogle(string address, TranslatorAccess translatorAccess)
         {
             string encodedAddress = HttpUtility.UrlEncode(address);
            
@@ -50,26 +53,29 @@ namespace TranslationRobot
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(result);
             
-            string country = GetCountryFromGoogleResult(xmlDocument);
+           
 
-          
-            string languageCode = translatorAccess.GetLanguageCode(country);
+            Location location = GetLocationFromGoogleResult(xmlDocument);
+           
+            location.LanguageCode = GetLanguageCode(location.CountryCode);
+            location.OriginalAddress = xmlDocument.GetElementsByTagName("formatted_address").Item(0).InnerText;
+
             string localizedAddress;
-            if (languageCode == "hi")
+            if (location.LanguageCode == "hi")
             {
-                Location location = GetLocationFromGoogleResult(xmlDocument);
-                localizedAddress = GetLocalizedAddressFromBing(location, languageCode);
+                
+                localizedAddress = GetLocalizedAddressFromBing(location, location.LanguageCode);
             }
             else
             {
-                string localizedResult = RequestHelper.DownloadString(url + "&language=" + languageCode);
+                string localizedResult = RequestHelper.DownloadString(url + "&language=" + location.LanguageCode);
                 XmlDocument localizedXmlDocument = new XmlDocument();
                 localizedXmlDocument.LoadXml(localizedResult);
                 localizedAddress = localizedXmlDocument.GetElementsByTagName("formatted_address").Item(0).InnerText;
             }
-
+            location.FormattedAddress = localizedAddress;
         
-            return localizedAddress;
+            return location;
         }
 
         private static string GetLocalizedAddressFromBing(Location location, string languageCode)
@@ -99,35 +105,46 @@ namespace TranslationRobot
 
             string longitudeString = xmlElement.GetElementsByTagName("lng")[0].InnerText;
             location.Longitude = double.Parse(longitudeString, CultureInfo.InvariantCulture);
+            location.SetCountryFromGoogleResult(xmlDocument);
             return location;
         }
 
-        private static string GetCountryFromGoogleResult(XmlDocument xmlDocument)
+        public static string GetLanguageCode(string countryCode)
         {
-            string country = null;
-            foreach (XmlElement xmlElement in xmlDocument.GetElementsByTagName("address_component"))
+            string result;
+            if (!CountryCodeToLanguageCode.TryGetValue(countryCode, out result))
             {
-                XmlNodeList elementsByTagName = xmlElement.GetElementsByTagName("type");
-                var isCountryNode = false;
-                foreach (XmlNode node in elementsByTagName)
+                //TODO better exception if country not found           
+                string uri = string.Format("https://restcountries.eu/rest/v1/alpha/" + countryCode);
+
+                WebRequest countryInfoWebRequest = WebRequest.Create(uri);
+
+                CountryInfo countryInfo;
+                using (WebResponse response = countryInfoWebRequest.GetResponse())
                 {
-                    if (node.InnerText == "country")
+                    using (Stream stream = response.GetResponseStream())
                     {
-                        isCountryNode = true;
+
+                        DataContractJsonSerializer dcs = new DataContractJsonSerializer(typeof(CountryInfo));
+                        countryInfo = (CountryInfo)dcs.ReadObject(stream);
+
                     }
                 }
-                if (isCountryNode)
-                {
-                    country = xmlElement.GetElementsByTagName("short_name")[0].InnerText.ToLower();
-                }
+                result = countryInfo.languages.First();
+                if (countryCode.Equals("cn", StringComparison.InvariantCultureIgnoreCase)) result = "zh-CN";
+
+                if (countryCode.Equals("hk", StringComparison.InvariantCultureIgnoreCase)) result = "zh-TW";
+                CountryCodeToLanguageCode[countryCode] = result;
             }
-            return country;
+            return result;
         }
 
+        public static IDictionary<string, string> CountryCodeToLanguageCode = new Dictionary<string, string>();
 
-        public static string GetLocationInfo(string address, TranslatorAccess translatorAccess)
+
+        public static Location GetLocationInfo(string address, TranslatorAccess translatorAccess)
         {
-            return GetLocalizedAddressFromGoogle(address, translatorAccess);
+            return GetLocationFromGoogle(address, translatorAccess);
         }
 
         private static string GetLocalizedAddressFromBing(string address, TranslatorAccess translatorAccess)

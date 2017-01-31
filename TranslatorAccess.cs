@@ -102,7 +102,7 @@ namespace TranslationRobot
             return result;
         }
 
-        public string GetLanguageCode(string countryCode)
+        internal string GetLanguageCode(string countryCode)
         {
             string result;
             if (!CountryCodeToLanguageCode.TryGetValue(countryCode, out result))
@@ -124,9 +124,9 @@ namespace TranslationRobot
                     }
                 }
                 result = countryInfo.languages.First();
-                if (countryCode.Equals("cn", StringComparison.InvariantCultureIgnoreCase)) result = "zh-CN";
+                if (countryCode.Equals("cn", StringComparison.InvariantCultureIgnoreCase)) result = "zh-CHS";
 
-                if (countryCode.Equals("hk", StringComparison.InvariantCultureIgnoreCase)) result = "zh-TW";
+                if (countryCode.Equals("hk", StringComparison.InvariantCultureIgnoreCase)) result = "zh-CHT";
                 CountryCodeToLanguageCode[countryCode] = result;
             }
             return result;

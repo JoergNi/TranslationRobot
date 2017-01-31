@@ -43,55 +43,31 @@ namespace TranslationRobotTest
         }
 
 
-        [TestMethod]
-        public void TestGetLocationInfo()
-        {
-            var translatorAccess = new TranslatorAccess();
-            string result = LocationInfo.GetLocationInfo("Cologne", translatorAccess);
-            Assert.AreEqual("Köln, NW, Deutschland", result);
-
-            result = LocationInfo.GetLocationInfo("Bonner Str 17, Cologne", translatorAccess);
-            Assert.AreEqual("Bonner Straße 17, 50677 Köln, Deutschland", result);
-
-            result = LocationInfo.GetLocationInfo("Bonner, Str, 17, Cologne", translatorAccess);
-            Assert.AreEqual("Bonner Straße 17, 50677 Köln, Deutschland", result);
-
-            result = LocationInfo.GetLocationInfo("1 Queen's Road Central, Hongkong", translatorAccess);
-            Assert.AreEqual("香港中環皇后大道中1號", result);
-
-            result = LocationInfo.GetLocationInfo("Guangzhou", translatorAccess);
-            Assert.AreEqual("广东省广州市", result);
-           
-
-
-
-
-        }
-
+       
         [TestMethod]
         public void TestGoogle()
         {
             var translatorAccess = new TranslatorAccess();
-            string result = LocationInfo.GetLocalizedAddressFromGoogle("Hasenhaus 2, Haan", translatorAccess);
-            Assert.AreEqual("Hasenhaus 2, 42781 Haan, Deutschland", result);
+            Location result = LocationInfo.GetLocationFromGoogle("Hasenhaus 2, Haan", translatorAccess);
+            Assert.AreEqual("Hasenhaus 2, 42781 Haan, Deutschland", result.FormattedAddress);
 
 
-            result = LocationInfo.GetLocalizedAddressFromGoogle("1 Queen's Road Central, Hongkong", translatorAccess);
-            Assert.AreEqual("香港中環皇后大道中1號匯豐總行大廈", result);
+            result = LocationInfo.GetLocationFromGoogle("1 Queen's Road Central, Hongkong", translatorAccess);
+            Assert.AreEqual("香港中環皇后大道中1號匯豐總行大廈", result.FormattedAddress);
 
-            result = LocationInfo.GetLocalizedAddressFromGoogle("Guangzhou", translatorAccess);
-            Assert.AreEqual("中国广东省广州市", result);
+            result = LocationInfo.GetLocationFromGoogle("Guangzhou", translatorAccess);
+            Assert.AreEqual("中国广东省广州市", result.FormattedAddress);
 
 
 
-            result = LocationInfo.GetLocalizedAddressFromGoogle("Platz des himmlischen Friedens", translatorAccess);
-            Assert.AreEqual("中国北京市东城区", result);
+            result = LocationInfo.GetLocationFromGoogle("Platz des himmlischen Friedens", translatorAccess);
+            Assert.AreEqual("中国北京市东城区", result.FormattedAddress);
 
-            result = LocationInfo.GetLocalizedAddressFromGoogle("25B Kalyani Nagar, Pune", translatorAccess);
-            Assert.AreEqual("कल्याणी नगर, पुणे, महाराष्ट्र, भारत", result);
+            result = LocationInfo.GetLocationFromGoogle("25B Kalyani Nagar, Pune", translatorAccess);
+            Assert.AreEqual("Central Avenue Road & Shastri Nagar Road, गुड विल एन्क्लेव, शास्त्री नगर, पुणे 411006, भारत", result.FormattedAddress);
 
-            result = LocationInfo.GetLocalizedAddressFromGoogle("The Westin, Pune", translatorAccess);
-            Assert.AreEqual("कल्याणी नगर, पुणे, महाराष्ट्र, भारत", result);
+            result = LocationInfo.GetLocationFromGoogle("The Westin, Pune", translatorAccess);
+            Assert.AreEqual("गणेश बाग, कोरेगांव, पुणे 411036, भारत", result.FormattedAddress);
             
 
         }
