@@ -124,9 +124,9 @@ namespace TranslationRobot
                     }
                 }
                 result = countryInfo.languages.First();
-                if (countryCode.Equals("cn", StringComparison.InvariantCultureIgnoreCase)) result = "zh-CHS";
+                if (countryCode.Equals("cn", StringComparison.InvariantCultureIgnoreCase)) result = "zh-CN";
 
-                if (countryCode.Equals("hk", StringComparison.InvariantCultureIgnoreCase)) result = "zh-CHT";
+                if (countryCode.Equals("hk", StringComparison.InvariantCultureIgnoreCase)) result = "zh-TW";
                 CountryCodeToLanguageCode[countryCode] = result;
             }
             return result;

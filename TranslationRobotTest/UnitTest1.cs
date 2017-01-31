@@ -67,5 +67,34 @@ namespace TranslationRobotTest
 
 
         }
+
+        [TestMethod]
+        public void TestGoogle()
+        {
+            var translatorAccess = new TranslatorAccess();
+            string result = LocationInfo.GetLocalizedAddressFromGoogle("Hasenhaus 2, Haan", translatorAccess);
+            Assert.AreEqual("Hasenhaus 2, 42781 Haan, Deutschland", result);
+
+
+            result = LocationInfo.GetLocalizedAddressFromGoogle("1 Queen's Road Central, Hongkong", translatorAccess);
+            Assert.AreEqual("香港中環皇后大道中1號匯豐總行大廈", result);
+
+            result = LocationInfo.GetLocalizedAddressFromGoogle("Guangzhou", translatorAccess);
+            Assert.AreEqual("中国广东省广州市", result);
+
+
+
+            result = LocationInfo.GetLocalizedAddressFromGoogle("Platz des himmlischen Friedens", translatorAccess);
+            Assert.AreEqual("中国北京市东城区", result);
+
+            result = LocationInfo.GetLocalizedAddressFromGoogle("25B Kalyani Nagar, Pune", translatorAccess);
+            Assert.AreEqual("कल्याणी नगर, पुणे, महाराष्ट्र, भारत", result);
+
+            result = LocationInfo.GetLocalizedAddressFromGoogle("The Westin, Pune", translatorAccess);
+            Assert.AreEqual("कल्याणी नगर, पुणे, महाराष्ट्र, भारत", result);
+            
+
+        }
+
     }
 }
