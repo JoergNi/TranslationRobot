@@ -48,26 +48,26 @@ namespace TranslationRobotTest
         public void TestGoogle()
         {
             var translatorAccess = new TranslatorAccess();
-            Location result = LocationInfo.GetLocationFromGoogle("Hasenhaus 2, Haan", translatorAccess);
-            Assert.AreEqual("Hasenhaus 2, 42781 Haan, Deutschland", result.FormattedAddress);
+            TranslatedAddressEntity result = LocationInfo.GetLocationFromGoogle("Hasenhaus 2, Haan", translatorAccess);
+            Assert.AreEqual("Hasenhaus 2, 42781 Haan, Deutschland", result.Translation);
 
 
             result = LocationInfo.GetLocationFromGoogle("1 Queen's Road Central, Hongkong", translatorAccess);
-            Assert.AreEqual("香港中環皇后大道中1號匯豐總行大廈", result.FormattedAddress);
+            Assert.AreEqual("香港中環皇后大道中1號匯豐總行大廈", result.Translation);
 
             result = LocationInfo.GetLocationFromGoogle("Guangzhou", translatorAccess);
-            Assert.AreEqual("中国广东省广州市", result.FormattedAddress);
+            Assert.AreEqual("中国广东省广州市", result.Translation);
 
 
 
             result = LocationInfo.GetLocationFromGoogle("Platz des himmlischen Friedens", translatorAccess);
-            Assert.AreEqual("中国北京市东城区", result.FormattedAddress);
+            Assert.AreEqual("中国北京市东城区", result.Translation);
 
             result = LocationInfo.GetLocationFromGoogle("25B Kalyani Nagar, Pune", translatorAccess);
-            Assert.AreEqual("Central Avenue Road & Shastri Nagar Road, गुड विल एन्क्लेव, शास्त्री नगर, पुणे 411006, भारत", result.FormattedAddress);
+            Assert.AreEqual("Central Avenue Road & Shastri Nagar Road, गुड विल एन्क्लेव, शास्त्री नगर, पुणे 411006, भारत", result.Translation);
 
             result = LocationInfo.GetLocationFromGoogle("The Westin, Pune", translatorAccess);
-            Assert.AreEqual("गणेश बाग, कोरेगांव, पुणे 411036, भारत", result.FormattedAddress);
+            Assert.AreEqual("गणेश बाग, कोरेगांव, पुणे 411036, भारत", result.Translation);
             
 
         }

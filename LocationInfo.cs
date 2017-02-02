@@ -44,7 +44,7 @@ namespace TranslationRobot
         private const string BingMapsKey = "Ag2p3wHuXnmlaO-LffokUlisExjYT6n70Vo9t71n72V5qQ_ZqA6gmPT4cXuD1Ych";
 
 
-        internal static Location GetLocationFromGoogle(string address, TranslatorAccess translatorAccess)
+        internal static TranslatedAddressEntity GetLocationFromGoogle(string address, TranslatorAccess translatorAccess)
         {
             string encodedAddress = HttpUtility.UrlEncode(address);
            
@@ -52,11 +52,11 @@ namespace TranslationRobot
             string result = RequestHelper.DownloadString(url);
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(result);
-            
-           
 
-            Location location = GetLocationFromGoogleResult(xmlDocument);
-           
+
+
+            TranslatedAddressEntity location = GetLocationFromGoogleResult(xmlDocument);
+            location.Input = address;
             location.LanguageCode = GetLanguageCode(location.CountryCode);
             location.OriginalAddress = xmlDocument.GetElementsByTagName("formatted_address").Item(0).InnerText;
 
@@ -64,7 +64,7 @@ namespace TranslationRobot
             if (location.LanguageCode == "hi")
             {
                 
-                localizedAddress = GetLocalizedAddressFromBing(location, location.LanguageCode);
+                localizedAddress = GetLocalizedAddressFromBing(address, translatorAccess);
             }
             else
             {
@@ -73,12 +73,12 @@ namespace TranslationRobot
                 localizedXmlDocument.LoadXml(localizedResult);
                 localizedAddress = localizedXmlDocument.GetElementsByTagName("formatted_address").Item(0).InnerText;
             }
-            location.FormattedAddress = localizedAddress;
+            location.Translation = localizedAddress;
         
             return location;
         }
 
-        private static string GetLocalizedAddressFromBing(Location location, string languageCode)
+        private static string GetLocalizedAddressFromBing(TranslatedAddressEntity location, string languageCode)
         {
             http://dev.virtualearth.net/REST/v1/Locations/47.64054,-122.12934?o=xml&key=BingMapsKey
             string url = " http://dev.virtualearth.net/REST/v1/Locations/" + location.Lattitude.ToString(CultureInfo.InvariantCulture)+","+location.Longitude.ToString(CultureInfo.InvariantCulture) + "?o=xml&inclnb=1&key=" + BingMapsKey + "&c=" + languageCode;
@@ -95,9 +95,9 @@ namespace TranslationRobot
             return localizedAddress;
         }
 
-        private static Location GetLocationFromGoogleResult(XmlDocument xmlDocument)
+        private static TranslatedAddressEntity GetLocationFromGoogleResult(XmlDocument xmlDocument)
         {
-            var location = new Location();
+            var location = new TranslatedAddressEntity();
             XmlElement xmlElement = (XmlElement) xmlDocument.GetElementsByTagName("location").Item(0);
             string lattitudeString = xmlElement.GetElementsByTagName("lat")[0].InnerText;
 
@@ -142,7 +142,7 @@ namespace TranslationRobot
         public static IDictionary<string, string> CountryCodeToLanguageCode = new Dictionary<string, string>();
 
 
-        public static Location GetLocationInfo(string address, TranslatorAccess translatorAccess)
+        public static TranslatedAddressEntity GetLocationInfo(string address, TranslatorAccess translatorAccess)
         {
             return GetLocationFromGoogle(address, translatorAccess);
         }

@@ -102,7 +102,7 @@ namespace TranslationRobot
             return result;
         }
 
-        internal string GetLanguageCode(string countryCode)
+        public string GetLanguageCode(string countryCode)
         {
             string result;
             if (!CountryCodeToLanguageCode.TryGetValue(countryCode, out result))
